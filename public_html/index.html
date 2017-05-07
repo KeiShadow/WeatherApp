@@ -1,34 +1,43 @@
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>jQuery Mobile: Theme Download</title>
-	<link rel="stylesheet" href="css/themes/WeatherApp.min.css" />
-<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script src="js/weather.js"></script>
-			
-</head>
-<body>
-	<div data-role="page" data-theme="a">
-		<div data-role="header" data-position="inline">
-			<h1>Počasí</h1>
-		</div>
-		<div data-role="content" data-theme="a">
-                    <h1>Aktuální počasí</h1>
-                    <p id="Actual">
-                        
-                        
-                        
-                        
-                    </p>
-                    
-                    <label>Vyberte lokaci:</label>
-                    <input name="Location" type="text" id="Location">
-                    <h1>Předpověď na 5 dní:</h1>
-		</div>
-	</div>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>jQuery Mobile: Theme Download</title>
+        <link rel="stylesheet" href="css/themes/WeatherApp.min.css" />
+        <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script src="js/weather.js"></script>
+        
+    </head>
+    <body>
+        <div data-role="page" id="page1" data-theme="a">
+            <div data-role="header" data-position="inline">
+                <h1>Počasí</h1>
+            </div>
+            <div data-role="content" data-theme="a">
+                <h1>Aktuální počasí</h1>
+                <p id="Actual">
+
+
+
+
+                </p>
+                <label>Vyberte lokaci:</label>
+
+                <form>
+                    <div class=" ui-input-search ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear">
+                        <input data-type="search" data-enhanced="true" data-inset="false" id="pre-rendered-example-input" placeholder="Zadej místo">
+                    </div>
+                </form>
+                <div data-role="controlgroup" data-enhanced="true" data-filter="true" data-filter-reveal="true" data-input="#pre-rendered-example-input" class="ui-controlgroup ui-controlgroup-vertical ui-corner-all">
+                    <div class="ui-controlgroup-controls" id="MySelect">
+
+                    </div>
+                </div>
+                                
+            </div>
+        </div>
+    </body>
 </html>
