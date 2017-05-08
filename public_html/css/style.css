@@ -3,6 +3,21 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.right{
+    left: 45px;
+    top: 10px;
+    margin-right: 250px;
+    position: relative;
+    
+}
+.left{
+    margin-right: 250px;
+    position: relative;
+    
+}
+.center{
+    
+}
 html,
 body,
 .main-wrapper,
@@ -475,8 +490,9 @@ body {
 }
 .weather-params > li span {
   position: relative;
-  top: 10px;
-  font-weight: 300;
+  display: inherit;
+
+  
 }
 
 .location,
