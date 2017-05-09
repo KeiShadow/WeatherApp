@@ -3,134 +3,274 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var url = 'http://api.openweathermap.org/data/2.5/weather?q=Ostrava&units=metric&lang=cz&appid=abcb921ca7be6867b0b964ece67ac025';
+var urlOnce = 'http://api.openweathermap.org/data/2.5/weather?q=Ostrava&units=metric&lang=en&appid=abcb921ca7be6867b0b964ece67ac025';
+var forecastDaily = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=Ostrava&units=metric&lang=en&cnt=7&appid=abcb921ca7be6867b0b964ece67ac025';
 
 $(document).on("pagecreate", "#page1", function (event) {
-   
-    getWeatherToday(url);
-    searchName();
+ 
+    if (navigator.onLine) {
+        getForeCast(forecastDaily);
+        getWeatherToday(urlOnce);
+        searchName();
+    } else {
+        getWeatherFromMem();
+    }
 });
 
-function Empty(){
-    $('.weather-place').empty();
-    $('.weather-temperature').empty();
-    $('.weather-min-temperature').empty();
+function Empty() {
+    $('.location').empty();
+    $('.today').empty();
+    $('#svg').empty();
+    $('.temperature').empty();
     $('.weather-max-temperature').empty();
-    $('.weather-description').empty();
+    $('.desc').empty();
     $('.weather-humidity').empty();
     $('.weather-wind-speed').empty();
     $('.weather-sunrise').empty();
-    $('.weather-sunset').empty();  
+    $('.weather-sunset').empty();
     
+
 }
 
-function SVG(main){
-    $('#main').append("<svg \n\
-        version=\"1.1\"\n\
-         id=\""+main+"\"\n\
-        class=\"climacon climacon_"+main+"\"\n\
-            xmlns=\"http://www.w3.org/2000/svg\"\n\
-            xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n\
-            x=\"0px\"\n\
-            y=\"0px\"\n\
-            viewBox=\"15 15 70 70\"\n\
-            enable-background=\"new 15 15 70 70\"\n\
-            xml:space=\"preserve\">\n\
-            <clipPath id=\"cloudFillClip\">\n\
-            <path d=\"M15,15v70h70V15H15z M59.943,61.639c-3.02,0-12.381,0-15.999,0c-6.626,0-11.998-5.371-11.998-11.998c0-6.627,5.372-11.999,11.998-11.999c5.691,0,10.434,3.974,11.665,9.29c1.252-0.81,2.733-1.291,4.334-1.291c4.418,0,8,3.582,8,8C67.943,58.057,64.361,61.639,59.943,61.639z\"/>\n\
-            </clipPath>\n\
-            <clipPath id=\"sunCloudFillClip\">\n\
-                <path d=\"M15,15v70h70V15H15z M57.945,49.641c-4.417,0-8-3.582-8-7.999c0-4.418,3.582-7.999,8-7.999s7.998,3.581,7.998,7.999C65.943,46.059,62.362,49.641,57.945,49.641z\"/>\n\
-            </clipPath>\n\
-            <clipPath id=\"cloudSunFillClip\">\n\
-                <path d=\"M15,15v70h20.947V63.481c-4.778-2.767-8-7.922-8-13.84c0-8.836,7.163-15.998,15.998-15.998c6.004,0,11.229,3.312,13.965,8.203c0.664-0.113,1.338-0.205,2.033-0.205c6.627,0,11.998,5.373,11.998,12c0,5.262-3.394,9.723-8.107,11.341V85H85V15H15z\"/>\n\
-            </clipPath>\n\
-            <g class=\"climacon_iconWrap climacon_iconWrap-"+main+"\">\n\
-                <g clip-path=\"url(#cloudSunFillClip)\">\n\
-                    <g class=\"climacon_componentWrap climacon_component"+main+" climacon_componentWrap-sun_cloud\">\n\
-                        <g class=\"climacon_componentWrap climacon_componentWrap_sunSpoke\">\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\"  d=\"M80.029,43.611h-3.998c-1.105,0-2-0.896-2-1.999s0.895-2,2-2h3.998c1.104,0,2,0.896,2,2S81.135,43.611,80.029,43.611z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M72.174,30.3c-0.781,0.781-2.049,0.781-2.828,0c-0.781-0.781-0.781-2.047,0-2.828l2.828-2.828c0.779-0.781,2.047-0.781,2.828,0c0.779,0.781,0.779,2.047,0,2.828L72.174,30.3z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M58.033,25.614c-1.105,0-2-0.896-2-2v-3.999c0-1.104,0.895-2,2-2c1.104,0,2,0.896,2,2v3.999C60.033,24.718,59.135,25.614,58.033,25.614z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M43.892,30.3l-2.827-2.828c-0.781-0.781-0.781-2.047,0-2.828c0.78-0.781,2.047-0.781,2.827,0l2.827,2.828c0.781,0.781,0.781,2.047,0,2.828C45.939,31.081,44.673,31.081,43.892,30.3z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M42.033,41.612c0,1.104-0.896,1.999-2,1.999h-4c-1.104,0-1.998-0.896-1.998-1.999s0.896-2,1.998-2h4C41.139,39.612,42.033,40.509,42.033,41.612z\"/>\n\
-                            <pathclass=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M43.892,52.925c0.781-0.78,2.048-0.78,2.827,0c0.781,0.78,0.781,2.047,0,2.828l-2.827,2.827c-0.78,0.781-2.047,0.781-2.827,0c-0.781-0.78-0.781-2.047,0-2.827L43.892,52.925z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M58.033,57.61c1.104,0,2,0.895,2,1.999v4c0,1.104-0.896,2-2,2c-1.105,0-2-0.896-2-2v-4C56.033,58.505,56.928,57.61,58.033,57.61z\"/>\n\
-                            <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunSpoke climacon_component-stroke_sunSpoke-north\" d=\"M72.174,52.925l2.828,2.828c0.779,0.78,0.779,2.047,0,2.827c-0.781,0.781-2.049,0.781-2.828,0l-2.828-2.827c-0.781-0.781-0.781-2.048,0-2.828C70.125,52.144,71.391,52.144,72.174,52.925z\"/>\n\
-                        </g>\n\
-                        <g class=\"climacon_componentWrap climacon_componentWrap-sunBody\" clip-path=\"url(#sunCloudFillClip)\">\n\
-                            <circle class=\"climacon_component climacon_component-stroke climacon_component-stroke_sunBody\" cx=\"58.033\" cy=\"41.612\" r=\"11.999\"/>\n\
-                        </g>\n\
-                    </g>\n\
-                </g>\n\
-                <g class=\"climacon_componentWrap climacon_componentWrap-rain\">\n\
-                    <path  class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- left\" d=\"M41.946,53.641c1.104,0,1.999,0.896,1.999,2v15.998c0,1.105-0.895,2-1.999,2s-2-0.895-2-2V55.641C39.946,54.537,40.842,53.641,41.946,53.641z\"/>\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- middle\" d=\"M49.945,57.641c1.104,0,2,0.896,2,2v15.998c0,1.104-0.896,2-2,2s-2-0.896-2-2V59.641C47.945,58.535,48.841,57.641,49.945,57.641z\"/>\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- right\" d=\"M57.943,53.641c1.104,0,2,0.896,2,2v15.998c0,1.105-0.896,2-2,2c-1.104,0-2-0.895-2-2V55.641C55.943,54.537,56.84,53.641,57.943,53.641z\"/>\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- left\" d=\"M41.946,53.641c1.104,0,1.999,0.896,1.999,2v15.998c0,1.105-0.895,2-1.999,2s-2-0.895-2-2V55.641C39.946,54.537,40.842,53.641,41.946,53.641z\"/>\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- middle\" d=\"M49.945,57.641c1.104,0,2,0.896,2,2v15.998c0,1.104-0.896,2-2,2s-2-0.896-2-2V59.641C47.945,58.535,48.841,57.641,49.945,57.641z\"/>\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_rain climacon_component-stroke_rain- right\" d=\"M57.943,53.641c1.104,0,2,0.896,2,2v15.998c0,1.105-0.896,2-2,2c-1.104,0-2-0.895-2-2V55.641C55.943,54.537,56.84,53.641,57.943,53.641z\"/>\n\
-                </g>\n\
-                <g class=\"climacon_componentWrap climacon_componentWrap-cloud\">\n\
-                    <path class=\"climacon_component climacon_component-stroke climacon_component-stroke_cloud\" d=\"M63.943,64.941v-4.381c2.389-1.384,4-3.961,4-6.92c0-4.417-3.582-8-8-8c-1.601,0-3.082,0.48-4.334,1.291c-1.23-5.317-5.973-9.29-11.665-9.29c-6.626,0-11.998,5.372-11.998,11.998c0,3.549,1.551,6.728,4,8.924v4.916c-4.777-2.768-8-7.922-8-13.84c0-8.835,7.163-15.997,15.998-15.997c6.004,0,11.229,3.311,13.965,8.203c0.664-0.113,1.338-0.205,2.033-0.205c6.627,0,11.998,5.372,11.998,12C71.941,58.863,68.602,63.293,63.943,64.941z\"/>\n\
-                </g>\n\
-            </g>\n\
-        </svg>");
-    
-    
-    
-    
-    
-    
-    
-}
-
-function getWeatherToday(url) {
+/*Online*/
+function getWeatherToday(urlOnce) {
+    Empty();
     $.ajax({
         dataType: "json",
-        url: url,
+        url: urlOnce,
         success: function (data) {
             var index = localStorage.length;
-            
+
             var SunriseSec = data["sys"].sunrise;
             var SunriseDate = new Date(SunriseSec * 1000);
             var SunriseTimestr = SunriseDate.toLocaleTimeString();
-            
+
             var SunsetSec = data["sys"].sunset;
             var SunsetDate = new Date(SunsetSec * 1000);
             var SunsetTimestr = SunsetDate.toLocaleTimeString();
-            
-           // Empty();
-            $('.location').append(data["name"]);
-            $('.temperature').append(data["main"].temp);
-            $('.weather-max-temperature').append(data["main"].temp_max+"°C");
-            $('.desc').append(data["weather"][0].description);
-            $('.weather-humidity').append(data["main"].humidity+"%");
-            $('.weather-wind-speed').append(data["wind"].speed+" m/s");
-            $('.weather-sunrise').append(SunriseTimestr);
-            $('.weather-sunset').append(SunsetTimestr);     
 
-            localStorage["Mesto"+index]="Město: "+data["name"] + ", Teplota " + data["main"].temp + "°C";
-                
+             
+            $('.location').append(data["name"]);
+            $('.temperature').append(Math.round(data["main"].temp)+"°");
+            $('.weather-max-temperature').append(data["main"].temp_max + "°C");
+            $('.desc').append(data["weather"][0].description);
+            $('.weather-humidity').append(data["main"].humidity + "%");
+            $('.weather-wind-speed').append(data["wind"].speed + " m/s");
+            $('.weather-sunrise').append(SunriseTimestr);
+            $('.weather-sunset').append(SunsetTimestr);
+
+            localStorage[data["name"]] = data["name"] +";"+ data["main"].temp +";"+ data["main"].temp_max +";"+ data["weather"][0].description +";"+ data["main"].humidity +";"+ data["wind"].speed +";"+data["weather"][0].id+";"+ SunriseTimestr +";"+ SunsetTimestr;
             index++;
+            getSVG(data["weather"][0].id, SunsetTimestr, SunriseTimestr);
         }
     });
-    var today= new Date();
+    var today = new Date();
     $('.today').append(today.toDateString());
-}  
+
+}
+
+
+function getForeCast(forecastDaily) {
+  Empty();
+ $.ajax({
+    dataType: "json",
+    url: forecastDaily, 
+    success: function (data) {
+        var pom = [];
+        var date= new Date();
+        var pomDate =[];
+        var countPolozek;
+         var weekday = new Array(7);
+            weekday[0] = "Sunday";
+            weekday[1] = "Monday";
+            weekday[2] = "Tuesday";
+            weekday[3] = "Wednesday";
+            weekday[4] = "Thursday";
+            weekday[5] = "Friday";
+            weekday[6] = "Saturday";
+         var teplota= new Array(7);
+         var id = new Array(7);
+         $.each(data['list'], function (i, field) {
+            pom[i]= field.dt;
+            teplota[i]=field.temp.day;
+            id[i]=field.weather[0]['id'];
+           
+         });
+         /*Prevod datumu*/
+         var mon = new Date(pomDate[6]);
+         var day = new Array(7);
+         for(var i=0;i<=pom.length;i++){
+             date = new Date(pom[i]*1000);
+             pomDate[i]=date;
+             pomDate[i]=pomDate[i].toLocaleDateString();
+             day[i]= date.getDay();
+         }
+           console.log(weekday[day[0]]); 
+          var today = new Date();
+          var actual;
+         for(var i=0;i<7;i++){
+             if(pomDate[i]===today.toLocaleDateString())
+             {
+                 $('#made').append("\
+                <li id="+i+" class=\""+getClimacon(id[i])+" active\">\n\
+                  <div class=\"inner\">\n\
+                      <h5 class=\"week-day\">"+weekday[day[i]]+"</h5>\n\
+                      <i class=\"climacon "+getClimacon(id[i])+"\"></i>\n\
+                      <p class=\"week-day-temperature\">"+Math.round(teplota[i])+"°</p>\n\
+                       <p>"+pomDate[i]+"</p>\n\
+                  </div>\n\
+                </li> ");   
+             }else  $('#made').append("\
+                <li id="+i+" class=\""+getClimacon(id[i])+"\">\n\
+                  <div class=\"inner\">\n\
+                      <h5 class=\"week-day\">"+weekday[day[i]]+"</h5>\n\
+                      <i class=\"climacon "+getClimacon(id[i])+"\"></i>\n\
+                      <p class=\"week-day-temperature\">"+Math.round(teplota[i])+"°</p>\n\
+                       <p>"+pomDate[i]+"</p>\n\
+                  </div>\n\
+                </li> "); 
+         } 
+    }
+ });
+}
+function getClimacon(id){
+   if (id >= 200 && id <= 232) {
+          return 'lighting';
+        } else if (id >= 300 && id <= 321) {
+           return 'drizzle'; 
+        } else if (id >= 500 && id <= 531) {
+           return 'rain';
+        } else if (id >= 600 && id <= 622) {
+           return 'snow';
+        } else if (id >= 701 && id <= 781) {
+           return 'fog';
+        } else if (id === 800) {
+           return 'sun';
+        } else if (id >= 801 && id <= 804) {
+            return 'cloud';
+        }
+        else if (id >= 901 && id <= 806) {
+            return 'tornado';
+        }
+    
+}
 function searchName() {
-   var pom = "";
-   
+    var pom = "";
     $.getJSON('city/cities.json', function (data) {
-         $('#MySelect').empty();
+        $('#MySelect').empty();
         $.each(data['data'], function (i, field) {
             pom += '<a href="" id="' + i + '" class="a ui-btn ui-corner-all ui-shadow ui-shadow ui-screen-hidden">' + field.name + ", " + field.cc + '</a>';
-        });   
+        });
         $('#MySelect').html(pom);
-         $('.a').click(function () {
+        $('.a').click(function () {
             var id;
             id = $(this).attr('id');
-           getWeatherToday("http://api.openweathermap.org/data/2.5/weather?q=" + data['data'][id]['name'] + "&units=metric&lang=cz&appid=abcb921ca7be6867b0b964ece67ac025");
+            getWeatherToday("http://api.openweathermap.org/data/2.5/weather?q=" + data['data'][id]['name'] + "&units=metric&lang=en&appid=abcb921ca7be6867b0b964ece67ac025");
         });
-    });     
+    });
 }
+/*Ofline*/
+function getWeatherFromMem(){
+    Empty();
+    index = localStorage.length;
+    var obj;
+    obj = localStorage.getItem("Ostrava");
+    var pom = obj.split(";");
+    $('.location').append(pom[0]);
+    $('.temperature').append(pom[1]);
+    $('.weather-max-temperature').append(pom[2]+"°C");
+    $('.desc').append(pom[3]);
+    $('.weather-humidity').append(pom[4]+ "%");
+    $('.weather-wind-speed').append(pom[5] + " m/s");
+    $('.weather-sunrise').append(pom[7]);
+    $('.weather-sunset').append(pom[8]);   
+    getSVG(pom[6], pom[8], pom[7]);
+}
+function searchWeathFromMem(){
+    
+    
+}
+/*Media*/
+function getSVG(id, SunSet, SunRise) {  
+    var time = new Date();
+    /*noc*/
+    if (time.toLocaleTimeString() < SunSet && SunRise>time.toLocaleTimeString()) {
+        if (id >= 200 && id <= 232) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudLightningMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudLightningMoon.svg\" />\n\
+               </object> ");
+        } else if (id >= 300 && id <= 321) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudDrizzleMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudDrizzleMoon.svg\" />\n\
+               </object> ");
+        } else if (id >= 500 && id <= 531) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudRainMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudRainMoon.svg\" />\n\
+               </object> ");
+        } else if (id >= 600 && id <= 622) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudSnowMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudSnowMoon.svg\" />\n\
+               </object> ");
+        } else if (id >= 701 && id <= 781) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudFogMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudFogMoon.svg\" />\n\
+               </object> ");
+        } else if (id === 800) {
+            $('#svg').append(
+                    "<object data=\"svgs/moon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/moon.svg\" />\n\
+               </object> ");
+        } else if (id >= 801 && id <= 804) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudMoon.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudMoon.svg\" />\n\
+               </object> ");
+        }
+    }
+    /*Den*/
+    else if (time.toLocaleTimeString() >SunSet && SunRise<time.toLocaleTimeString()) {
+        if (id >= 200 && id <= 232) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudLightningSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudLightningSun.svg\" />\n\
+               </object> ");
+        } else if (id >= 300 && id <= 321) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudDrizzleSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudDrizzleSun.svg\" />\n\
+               </object> ");
+        } else if (id >= 500 && id <= 531) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudRainSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudRainSun.svg\" />\n\
+               </object> ");
+        } else if (id >= 600 && id <= 622) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudSnowSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudSnowSun.svg\" />\n\
+               </object> ");
+        } else if (id >= 701 && id <= 781) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudFogSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudFogSun.svg\" />\n\
+               </object> ");
+        } else if (id === 800) {
+            $('#svg').append(
+                    "<object data=\"svgs/sun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/sun.svg\" />\n\
+               </object> ");
+        } else if (id >= 801 && id <= 804) {
+            $('#svg').append(
+                    "<object data=\"svgs/cloudSun.svg\" type=\"image/svg+xml\">\n\
+                <img src=\"svgs/cloudSun.svg\" />\n\
+               </object> ");
+        }
+
+    }
+}
+

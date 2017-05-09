@@ -7,92 +7,84 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="climacon-font/styles.css">
         <link rel="stylesheet" href="css/climacon.css">
+        <link rel="stylesheet" href="climacon-font/styles.css">
+
+        <!-- 
+        <link rel="stylesheet" href="css/normalize.css">
+        
+        !-->
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
 
         <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300' rel='stylesheet' type='text/css'>
-
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
         <script src="js/weather.js"></script>
     </head>
     <body> 
-        <div data-role="page" id="page1">
+        <div data-role="page" id="page1" class="panel">
             <div data-role="header">
                 <h1>WeatherApp</h1>
             </div><!-- /header -->
-            <div class="main-wrapper">
-                <div class="main-wrapper-mask"></div>
-                <div class="main-wrapper-blur" style="background-image: url(img/FewClouds-lg.jpg)"></div>
-                <div class="main-wrapper-front">
-                    <div class="full-center">
-                        <div class="widget-block">
-                            <!-- MAIN AREA -->
-                            <div class="img-area">
-                                <div class="img-area-mask"></div>
-                                <img src="img/FewClouds-sm.jpg" alt=""> 
-                                <div class="img-area-front">
-
-                                    <h5 class="location"></h5>
-                                    <p class="today"></p>
 
 
-                                    <ul class="weather-block-info"> 
-                                        <li > 
-                                            <span class="temperature"></span>
-                                        </li>
-                                        <li class="svg" >
-                                            <!-- MAIN ANIMATED SVG WEATHER ICON -->
-                                            <object data="svg/Cloud-Hail-Moon.svg" type="image/svg+xml">
-                                                <img src="svg/Cloud-Hail-Moon.svg" />
-                                            </object>
-                                            <!-- /MAIN ANIMATED SVG WEATHER ICON -->
-                                        </li>
+            <div class="panel-body container">
+                <div class="image"></div>
+                <!--JumboTron Actual!-->
+                <div class="jumbotron vertical-center text-center ">
+                    <div class="jumboimg"></div>
+                    <div class="row">
+                        <h5 class="location"></h5>
+                        <p class="today"></p>
 
-                                        <li>
-                                            <div class="container">
-                                                <ul class="weather-params">
-                                                    <li><i class="climacon thermometer medium-high"></i> <span class="weather-max-temperature"></span></li>
-                                                    <li><i class="climacon moon full"></i> <span class="weather-humidity"></span></li>
-                                                    <li><i class="climacon wind"></i> <span class="weather-wind-speed"></span></li>
-                                                    <li><i class="climacon sunrise"></i> <span class="weather-sunrise"></span></li>
-                                                    <li><i class="climacon sunset"></i> <span class="weather-sunset"></span></li>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="weather-desc">
-                                        <span class="desc"></span>
-                                    </div>
-                                </div>
-                            </div>
+
+                        <div class=" col-md-4 ">
+                            <span class="temperature text-right"></span>
+                        </div>
+
+                        <div class="  col-md-4 ">
+                            <span id="svg"></span>
+                        </div>
+
+                        <div class=" col-md-4 ">
+                            <ul class="list-group weather-params">
+                                <li class="list-group-item "><i class="climacon thermometer medium-high"></i> <span class="weather-max-temperature"></span></li>
+                                <li class="list-group-item "><i class="climacon moon full"></i> <span class="weather-humidity"></span></li>
+                                <li class="list-group-item  "><i class="climacon wind"></i> <span class="weather-wind-speed"></span></li>
+                                <li class="list-group-item "><i class="climacon sunrise"></i> <span class="weather-sunrise"></span></li>
+                                <li class="list-group-item "><i class="climacon sunset"></i> <span class="weather-sunset"></span></li>
+                            </ul>
+                        </div>
+                        <div class="weather-desc">
+                            <span class="desc"></span>
+                        </div>
+
+                    </div>
+                </div>
+                <!--END OF JumboTron Actual!-->
+                <ul id="made" class=" panel week-forecast list-group">
+                  
+               
+                </ul>
+                <div class="jumbotron">
+                    <label>Vyberte lokaci:</label>
+
+                    <form>
+                        <div class=" ui-input-search ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear">
+                            <input data-type="search" data-enhanced="true" data-inset="false" id="pre-rendered-example-input" placeholder="Zadej místo">
+                        </div>
+                    </form>
+                    <div data-role="controlgroup" data-enhanced="true" data-filter="true" data-filter-reveal="true" data-input="#pre-rendered-example-input" class="ui-controlgroup ui-controlgroup-vertical ui-corner-all">
+                        <div class="ui-controlgroup-controls" id="MySelect">
+
                         </div>
                     </div>
 
+                </div>
                 </div>
             </div>
         </div>
     </body>
 </html>
-
-<!--  <div data-role="content" >
-
-<h1>Aktuální počasí</h1>
-<div id="actual-weather">
-
-
-<label>Vyberte lokaci:</label>
-
-<form>
-<div class=" ui-input-search ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear">
-<input data-type="search" data-enhanced="true" data-inset="false" id="pre-rendered-example-input" placeholder="Zadej místo">
-</div>
-</form>
-<div data-role="controlgroup" data-enhanced="true" data-filter="true" data-filter-reveal="true" data-input="#pre-rendered-example-input" class="ui-controlgroup ui-controlgroup-vertical ui-corner-all">
-<div class="ui-controlgroup-controls" id="MySelect">
-
-</div>
-</div>
-
-</div>!-->
