@@ -22,58 +22,57 @@
             <div data-role="header">
                 <h1>WeatherApp</h1>
             </div><!-- /header -->
-
-
-
             <div class="main-wrapper">
                 <div class="main-wrapper-mask"></div>
                 <div class="main-wrapper-blur" style="background-image: url(img/FewClouds-lg.jpg)"></div>
                 <div class="main-wrapper-front">
-                    <div class="ui-grid-b ui-responsive">
-                        <div class="full-center">
-                                <div class="widget-block">
-                                    <!-- MAIN AREA -->
-                                    <div class="img-area">
-                                        <div class="img-area-mask"></div>
-                                        <img src="img/FewClouds-sm.jpg" alt=""> 
-                                        <div class="img-area-front">
+                    <div class="full-center">
+                        <div class="widget-block">
+                            <!-- MAIN AREA -->
+                            <div class="img-area">
+                                <div class="img-area-mask"></div>
+                                <img src="img/FewClouds-sm.jpg" alt=""> 
+                                <div class="img-area-front">
 
-                                            <h5 class="location"></h5>
-                                            <p class="today"></p>
-                                            <div class="weather-desc">
-                                                <span class="desc"></span>
+                                    <h5 class="location"></h5>
+                                    <p class="today"></p>
+
+
+                                    <ul class="weather-block-info"> 
+                                        <li > 
+                                            <span class="temperature"></span>
+                                        </li>
+                                        <li class="svg" >
+                                            <!-- MAIN ANIMATED SVG WEATHER ICON -->
+                                            <object data="svg/Cloud-Hail-Moon.svg" type="image/svg+xml">
+                                                <img src="svg/Cloud-Hail-Moon.svg" />
+                                            </object>
+                                            <!-- /MAIN ANIMATED SVG WEATHER ICON -->
+                                        </li>
+
+                                        <li>
+                                            <div class="container">
+                                                <ul class="weather-params">
+                                                    <li><i class="climacon thermometer medium-high"></i> <span class="weather-max-temperature"></span></li>
+                                                    <li><i class="climacon moon full"></i> <span class="weather-humidity"></span></li>
+                                                    <li><i class="climacon wind"></i> <span class="weather-wind-speed"></span></li>
+                                                    <li><i class="climacon sunrise"></i> <span class="weather-sunrise"></span></li>
+                                                    <li><i class="climacon sunset"></i> <span class="weather-sunset"></span></li>
+                                                </ul>
                                             </div>
-
-                                            <ul class="weather-block-info"> 
-                                                <li class="left"> 
-                                                    <p class="temperature"></p>
-                                                </li>
-                                                <li class="svg" >
-                                                    <!-- MAIN ANIMATED SVG WEATHER ICON -->
-                                                    <object data="svg/Cloud-Hail-Moon.svg" type="image/svg+xml">
-                                                        <img src="svg/Cloud-Hail-Moon.svg" />
-                                                    </object>
-                                                    <!-- /MAIN ANIMATED SVG WEATHER ICON -->
-                                                </li>
-                                               
-                                                <li class="right">
-                                                    <ul class="weather-params">
-                                                        <li><i class="climacon thermometer medium-high"></i> <span class="weather-max-temperature"></span></li>
-                                                        <li><i class="climacon moon full"></i> <span class="weather-humidity"></span></li>
-                                                        <li><i class="climacon wind"></i> <span class="weather-wind-speed"></span></li>
-                                                        <li><i class="climacon sunrise"></i> <span class="weather-sunrise"></span></li>
-                                                        <li><i class="climacon sunset"></i> <span class="weather-sunset"></span></li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                             </div>
-                                        </div>
+                                        </li>
+                                    </ul>
+                                    <div class="weather-desc">
+                                        <span class="desc"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+            </div>
+        </div>
     </body>
 </html>
 
