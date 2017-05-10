@@ -7,19 +7,34 @@ var urlOnce = 'http://api.openweathermap.org/data/2.5/weather?q=Ostrava&units=me
 var forecastDaily = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=Ostrava&units=metric&lang=en&cnt=7&appid=abcb921ca7be6867b0b964ece67ac025';
 
 $(document).on("pagecreate", "#page1", function (event) {
- 
     if (navigator.onLine) {
+        searchName();
         getForeCast(forecastDaily);
         getWeatherToday(urlOnce);
-        searchName();
+        
     } else {
         getWeatherFromMem();
     }
 });
 
+$(document).on("pageinit", "#page1", function () {
+    $(document).on("swiperight", "#page1", function (e) {
+        // We check if there is no open panel on the page because otherwise
+        // a swipe to close the left panel would also open the right panel (and v.v.).
+        // We do this by checking the data that the framework stores on the page element (panel: open).
+        if ($.mobile.activePage.jqmData("panel") !== "open") {
+            if (e.type === "swiperight") {
+                $("#mypanel").panel("open");
+            }
+        }
+    });
+});
+function EmptyToday(){
+    
+    $('.today').empty();
+}
 function Empty() {
     $('.location').empty();
-    $('.today').empty();
     $('#svg').empty();
     $('.temperature').empty();
     $('.weather-max-temperature').empty();
@@ -28,13 +43,14 @@ function Empty() {
     $('.weather-wind-speed').empty();
     $('.weather-sunrise').empty();
     $('.weather-sunset').empty();
-    
+    $('#made').empty();
 
 }
 
 /*Online*/
 function getWeatherToday(urlOnce) {
     Empty();
+    EmptyToday();
     $.ajax({
         dataType: "json",
         url: urlOnce,
@@ -43,33 +59,35 @@ function getWeatherToday(urlOnce) {
 
             var SunriseSec = data["sys"].sunrise;
             var SunriseDate = new Date(SunriseSec * 1000);
-            var SunriseTimestr = SunriseDate.toLocaleTimeString();
+            var Vychod = SunriseDate.toLocaleTimeString();
+            var VychodH = SunriseDate.getHours();
+            var VychodM = SunriseDate.getMinutes();
 
             var SunsetSec = data["sys"].sunset;
             var SunsetDate = new Date(SunsetSec * 1000);
-            var SunsetTimestr = SunsetDate.toLocaleTimeString();
-
-             
+            var Zapad = SunsetDate.toLocaleTimeString();
+            var ZapadH = SunsetDate.getHours();
+            var ZapadM = SunsetDate.getMinutes();
+             function pad(d) {
+                return (d < 10) ? '0' + d.toString() : d.toString();
+            }
             $('.location').append(data["name"]);
             $('.temperature').append(Math.round(data["main"].temp)+"°");
             $('.weather-max-temperature').append(data["main"].temp_max + "°C");
             $('.desc').append(data["weather"][0].description);
             $('.weather-humidity').append(data["main"].humidity + "%");
             $('.weather-wind-speed').append(data["wind"].speed + " m/s");
-            $('.weather-sunrise').append(SunriseTimestr);
-            $('.weather-sunset').append(SunsetTimestr);
+            $('.weather-sunrise').append(VychodH+":"+pad(VychodM));
+            $('.weather-sunset').append(ZapadH+":"+pad(ZapadM));
 
-            localStorage[data["name"]] = data["name"] +";"+ data["main"].temp +";"+ data["main"].temp_max +";"+ data["weather"][0].description +";"+ data["main"].humidity +";"+ data["wind"].speed +";"+data["weather"][0].id+";"+ SunriseTimestr +";"+ SunsetTimestr;
+            localStorage["City"+index] = data["name"] +";"+ data["main"].temp +";"+ data["main"].temp_max +";"+ data["weather"][0].description +";"+ data["main"].humidity +";"+ data["wind"].speed +";"+data["weather"][0].id+";"+ Vychod +";"+ Zapad;
             index++;
-            getSVG(data["weather"][0].id, SunsetTimestr, SunriseTimestr);
+            getSVG(data["weather"][0].id, VychodH, ZapadH);
         }
     });
     var today = new Date();
     $('.today').append(today.toDateString());
-
 }
-
-
 function getForeCast(forecastDaily) {
   Empty();
  $.ajax({
@@ -105,7 +123,6 @@ function getForeCast(forecastDaily) {
              pomDate[i]=pomDate[i].toLocaleDateString();
              day[i]= date.getDay();
          }
-           console.log(weekday[day[0]]); 
           var today = new Date();
           var actual;
          for(var i=0;i<7;i++){
@@ -159,17 +176,33 @@ function searchName() {
     $.getJSON('city/cities.json', function (data) {
         $('#MySelect').empty();
         $.each(data['data'], function (i, field) {
-            pom += '<a href="" id="' + i + '" class="a ui-btn ui-corner-all ui-shadow ui-shadow ui-screen-hidden">' + field.name + ", " + field.cc + '</a>';
-        });
+            if(field.cc==="CZ")
+               pom += '<a href="" id="' + i + '" class="a ui-btn ui-corner-all ui-shadow ui-shadow ui-screen-hidden">' + field.name + ", " + field.cc + '</a>';
+          });
         $('#MySelect').html(pom);
         $('.a').click(function () {
             var id;
             id = $(this).attr('id');
             getWeatherToday("http://api.openweathermap.org/data/2.5/weather?q=" + data['data'][id]['name'] + "&units=metric&lang=en&appid=abcb921ca7be6867b0b964ece67ac025");
+            getForeCast("http://api.openweathermap.org/data/2.5/forecast/daily?q="+data['data'][id]['name']+"&units=metric&lang=en&cnt=7&appid=abcb921ca7be6867b0b964ece67ac025");
+        $("#mypanel").panel("close");
         });
     });
+    
 }
 /*Ofline*/
+function setName(){
+    index = localStorage.length;
+    var arr = new Array(index);
+    var pom = new Array(index);
+    for(var i = 0;i<= index;i++){
+      arr[i]=  localStorage.getItem("City"+i) 
+    }
+    pom= arr[0].split(";");
+        $('#fav').append('<a href="" id=" '+ 0 + '">'+pom[0]+'</a>'); 
+     
+         
+}
 function getWeatherFromMem(){
     Empty();
     index = localStorage.length;
@@ -186,15 +219,12 @@ function getWeatherFromMem(){
     $('.weather-sunset').append(pom[8]);   
     getSVG(pom[6], pom[8], pom[7]);
 }
-function searchWeathFromMem(){
-    
-    
-}
+
 /*Media*/
-function getSVG(id, SunSet, SunRise) {  
+function getSVG(id, VychodH, ZapadH) {  
     var time = new Date();
     /*noc*/
-    if (time.toLocaleTimeString() < SunSet && SunRise>time.toLocaleTimeString()) {
+    if (time.getHours()>ZapadH) {
         if (id >= 200 && id <= 232) {
             $('#svg').append(
                     "<object data=\"svgs/cloudLightningMoon.svg\" type=\"image/svg+xml\">\n\
@@ -233,7 +263,7 @@ function getSVG(id, SunSet, SunRise) {
         }
     }
     /*Den*/
-    else if (time.toLocaleTimeString() >SunSet && SunRise<time.toLocaleTimeString()) {
+    else if (time.getHours()>VychodH) {
         if (id >= 200 && id <= 232) {
             $('#svg').append(
                     "<object data=\"svgs/cloudLightningSun.svg\" type=\"image/svg+xml\">\n\

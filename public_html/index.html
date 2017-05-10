@@ -24,12 +24,27 @@
         <script src="js/weather.js"></script>
     </head>
     <body> 
+
         <div data-role="page" id="page1" class="panel">
+             <div data-role="panel" id="mypanel" data-display="push" data-dismissible="true">
+                 <form>
+                     <div class=" ui-input-search ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear">
+                         <input data-type="pom search" data-enhanced="true" data-inset="false" id="pre-rendered-example-input" placeholder="Zadej místo">
+                     </div>
+                 </form>
+                 <div data-role="controlgroup" data-enhanced="true" data-filter="true" data-filter-reveal="true" data-input="#pre-rendered-example-input" class="ui-controlgroup ui-controlgroup-vertical ui-corner-all">
+                     <div class="ui-controlgroup-controls" id="MySelect">
+
+                     </div>
+                 </div>                 
+            </div><!-- /panel -->
+            
             <div data-role="header">
                 <h1>WeatherApp</h1>
             </div><!-- /header -->
 
-
+           
+            
             <div class="panel-body container">
                 <div class="image"></div>
                 <!--JumboTron Actual!-->
@@ -65,10 +80,10 @@
                 </div>
                 <!--END OF JumboTron Actual!-->
                 <ul id="made" class=" panel week-forecast list-group">
-                  
-               
+
+
                 </ul>
-                <div class="jumbotron">
+                <!--<div class="jumbotron">
                     <label>Vyberte lokaci:</label>
 
                     <form>
@@ -82,9 +97,9 @@
                         </div>
                     </div>
 
-                </div>
-                </div>
+                !-->
             </div>
+
         </div>
     </body>
 </html>
